@@ -1,18 +1,5 @@
 name: Build NBS
 description: Build NBS
-inputs:
-  CCACHE_PASSWORD:
-    type: string
-    required: false
-    description: 'CCache htpasswd webdav PUT password'
-  REMOTE_CACHE_URL:
-    type: string
-    required: true
-  DISTCC_HOSTS:
-    type: string
-    required: true
-    default: 'localhost/32 dp7329odurnhplpf5ff0.auto.internal/64'
-
 runs:
   using: "composite"
   steps:
@@ -57,15 +44,24 @@ runs:
         ninja ./cloud/blockstore/apps/disk_agent/diskagentd
         echo ::endgroup::
 
+        echo ::group::build all executable targets
+        ninja
+        echo ::endgroup::
+
         df -h
         ccache -sx
+    - name: Launch tests
+      shell: bash
+      run: |
+        export CONAN_USER_HOME=`realpath ..`
+        ctest
 
-    - name: report Build failed
+    - name: Report build failed
       if: ${{ failure() }}
       shell: bash
       run: |
         echo "# Build failed" >> $GITHUB_STEP_SUMMARY
-    - name: report Build cancelled
+    - name: Report build cancelled
       if: ${{ cancelled() }}
       shell: bash
       run: |
