@@ -2,7 +2,19 @@ name: Build NBS Binaries
 
 on:
   workflow_dispatch:
+    inputs:
+      CCACHE_READONLY:
+        type: boolean
+        required: false
+        default: true
+        description: 'Do not update ccache cache'
   workflow_call:
+    inputs:
+      CCACHE_READONLY:
+        type: boolean
+        required: false
+        default: true
+        description: 'Do not update ccache cache'
 
 jobs:
   provide-runner:
@@ -43,6 +55,8 @@ jobs:
       uses: ./.github/actions/prepare
     - name: Build
       uses: ./.github/actions/build
+      with:
+        CCACHE_READONLY: ${{ inputs.CCACHE_READONLY }}
   release-runner:
     name: Release self-hosted Nebius runner if provided on-demand
     needs:
