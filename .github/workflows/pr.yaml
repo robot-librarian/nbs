@@ -109,7 +109,6 @@ jobs:
       build_target: "ydb/"
       test_size: "small,medium"
       test_type: "unittest,py3test,py2test,pytest"
-      test_threads: 52
       runner_label: ya-make
       cache_tests: true
       update_bazel_cache: false

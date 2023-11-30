@@ -40,14 +40,6 @@ on:
         type: boolean
         default: true
         description: "run tests"
-      test_threads:
-        type: string
-        default: "28"
-        description: "Test threads count"
-      link_threads:
-        type: string
-        default: "8"
-        description: "link threads count"
       runner_label:
         type: string
         default: "ya-make"
@@ -112,8 +104,8 @@ jobs:
       run_tests: ${{ inputs.run_tests }}
       test_size: ${{ inputs.test_size }}
       test_type: ${{ inputs.test_type }}
-      link_threads: ${{ inputs.link_threads }}
-      test_threads: ${{ inputs.test_threads }}
+      link_threads: "8"
+      test_threads: "32"
       cache_tests: ${{ inputs.cache_tests }}
       update_bazel_cache: ${{ inputs.update_bazel_cache }}
     secrets: inherit
