@@ -9,7 +9,7 @@ on:
         description: "VM image"
       build_target:
         type: string
-        default: "cloud/blockstore/apps/"
+        default: "cloud/blockstore/"
         description: "limit build and test to specific target"
       build_preset:
         type: choice
@@ -63,7 +63,7 @@ on:
         default: arlng9uhmtlat6q5pqlv
       build_target:
         type: string
-        default: "cloud/blockstore/apps/"
+        default: "cloud/blockstore/"
       build_preset:
         type: string
         default: "relwithdebinfo"

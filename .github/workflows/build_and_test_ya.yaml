@@ -5,7 +5,7 @@ on:
     inputs:
       build_target:
         type: string
-        default: "cloud/blockstore/apps/"
+        default: "cloud/blockstore/"
         description: "limit build and test to specific target"
       build_preset:
         type: string
