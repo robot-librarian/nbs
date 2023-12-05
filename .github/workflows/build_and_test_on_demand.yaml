@@ -5,7 +5,7 @@ on:
     inputs:
       build_target:
         type: string
-        default: "cloud/blockstore/apps"
+        default: "cloud/blockstore/apps/"
         description: "limit build to specific target"
       test_target:
         type: string
@@ -60,7 +60,7 @@ on:
     inputs:
       build_target:
         type: string
-        default: "cloud/blockstore/apps"
+        default: "cloud/blockstore/apps/"
         description: "limit build to specific target"
       test_target:
         type: string
