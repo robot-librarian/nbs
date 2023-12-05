@@ -1,9 +1,9 @@
 name: Run tests (ya make)
 description: Run tests using ya make
 inputs:
-  build_target:
+  test_target:
     required: false
-    description: "build target"
+    description: "test target"
 
   build_preset:
     required: true
@@ -96,8 +96,8 @@ runs:
         esac
 
 
-        if [ ! -z "${{ inputs.build_target }}" ]; then
-          extra_params+=(--target="${{ inputs.build_target }}")
+        if [ ! -z "${{ inputs.test_target }}" ]; then
+          extra_params+=(--target="${{ inputs.test_target }}")
         fi
 
         if [ ! -z "${{ inputs.bazel_remote_uri }}" ]; then

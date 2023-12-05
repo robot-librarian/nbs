@@ -5,6 +5,10 @@ on:
     inputs:
       build_target:
         type: string
+        default: "cloud/blockstore/apps/"
+        description: "limit build and test to specific target"
+      test_target:
+        type: string
         default: "cloud/blockstore/"
         description: "limit build and test to specific target"
       build_preset:
@@ -81,7 +85,7 @@ jobs:
       uses: ./.github/actions/test
       if: inputs.run_tests
       with:
-        build_target: ${{ inputs.build_target }}
+        test_target: ${{ inputs.test_target }}
         build_preset: ${{ inputs.build_preset }}
         test_size: ${{ inputs.test_size }}
         test_type: ${{ inputs.test_type }}

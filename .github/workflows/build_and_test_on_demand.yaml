@@ -3,14 +3,14 @@ name: Build and test NBS on demand
 on:
   workflow_dispatch:
     inputs:
-      image:
-        type: string
-        default: arlng9uhmtlat6q5pqlv
-        description: "VM image"
       build_target:
         type: string
+        default: "cloud/blockstore/apps"
+        description: "limit build to specific target"
+      test_target:
+        type: string
         default: "cloud/blockstore/"
-        description: "limit build and test to specific target"
+        description: "limit test to specific target"
       build_preset:
         type: choice
         default: "relwithdebinfo"
@@ -58,12 +58,14 @@ on:
         description: "run tests"
   workflow_call:
     inputs:
-      image:
-        type: string
-        default: arlng9uhmtlat6q5pqlv
       build_target:
         type: string
+        default: "cloud/blockstore/apps"
+        description: "limit build to specific target"
+      test_target:
+        type: string
         default: "cloud/blockstore/"
+        description: "limit test to specific target"
       build_preset:
         type: string
         default: "relwithdebinfo"
@@ -147,6 +149,7 @@ jobs:
       runner_kind: self-hosted
       runner_label: ${{ needs.provide-runner.outputs.label }}
       build_target: ${{ inputs.build_target }}
+      test_target: ${{ inputs.test_target }}
       build_preset: ${{ inputs.build_preset }}
       run_build: ${{ inputs.run_build }}
       run_tests: ${{ inputs.run_tests }}
