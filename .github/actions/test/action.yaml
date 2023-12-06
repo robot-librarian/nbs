@@ -140,8 +140,8 @@ runs:
         platform_name=$(uname | tr '[:upper:]' '[:lower:]')-$(arch)
 
         .github/scripts/tests/generate-summary.py \
-          --summary-out-path $ARTIFACTS_DIR/summary/ \
-          --summary-url-prefix $S3_URL_PREFIX/summary/ \
+          --summary-out-path "$ARTIFACTS_DIR/summary/" \
+          --summary-url-prefix "$S3_URL_PREFIX/summary/" \
           --build-preset "${platform_name}-${{ inputs.build_preset }}" \
           "Tests" ya-test.html "$JUNIT_REPORT_XML"
 
