@@ -164,7 +164,6 @@ jobs:
     name: Release self-hosted YC runner if provided on-demand
     needs:
       - provide-runner # required to get output from the start-runner job
-      - build-and-test # required to wait when the main job is done
     runs-on: ubuntu-latest
     if: always()
     steps:

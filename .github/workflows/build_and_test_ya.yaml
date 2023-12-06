@@ -31,7 +31,7 @@ on:
         description: "run tests"
       test_threads:
         type: string
-        default: '28'
+        default: '32'
         description: "Test threads count"
       link_threads:
         type: string
@@ -45,7 +45,7 @@ on:
         default: "unittest,py3test,py2test,pytest"
       folder_prefix:
         type: string
-        default: "ya-"
+        default: "nebius-"
       update_bazel_cache:
         type: boolean
         default: false
@@ -68,6 +68,16 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       if: github.event.pull_request.head.sha == ''
+
+    - name: Prepare s3cmd
+      uses: ./.github/actions/s3cmd
+      with:
+        s3_bucket: ${{ vars.AWS_BUCKET }}
+        s3_endpoint: ${{ vars.AWS_ENDPOINT }}
+        s3_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        s3_key_secret: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        folder_prefix: nebius-
+        build_preset: ${{ inputs.build_preset }}
 
     - name: Build
       uses: ./.github/actions/build
