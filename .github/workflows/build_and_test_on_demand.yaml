@@ -96,7 +96,7 @@ on:
 
 jobs:
   provide-runner:
-    name: Start self-hosted YC runner
+    name: Start self-hosted runner
     timeout-minutes: 5
     runs-on: ubuntu-latest
     outputs:
@@ -161,7 +161,7 @@ jobs:
     secrets: inherit
 
   release-runner:
-    name: Release self-hosted YC runner if provided on-demand
+    name: Release self-hosted runner
     needs:
       - provide-runner # required to get output from the start-runner job
       - build-and-test # required to wait when the main job is done
