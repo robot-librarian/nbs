@@ -40,7 +40,7 @@ jobs:
 
             const userLogin = context.payload.pull_request.user.login;
 
-            if (whiteListedUsers.includes(userLoging)) {
+            if (whiteListedUsers.includes(userLogin)) {
               console.log('User is whitelisted')
               return true
             }
