@@ -44,7 +44,7 @@ jobs:
           pattern: "*.sh"
 
       - name: shfmt
-        uses: reviewdog/action-shfmt@v1.0.2
+        uses: librarian/action-shfmt@v0.0.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           workdir: .github/
@@ -109,7 +109,7 @@ jobs:
             | xargs -I {} action-validator --verbose {} > $TMP_OUT
 
           echo "WORKFLOW_LINT=$(cat $TMP_OUT | awk -v ORS='\\n' 1)"
-          echo "WORKFLOW_LINT=$(cat $TMP_OUT | awk -v ORS='\\n' 1)" >> "$GITHUB_STEP_SUMMARY"
+          cat $TMP_OUT >> "$GITHUB_STEP_SUMMARY"
           echo "WORKFLOW_LINT=$(cat $TMP_OUT | awk -v ORS='\\n' 1)" >> "$GITHUB_OUTPUT"
 
       - name: comment on issue
