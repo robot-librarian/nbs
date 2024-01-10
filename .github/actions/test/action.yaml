@@ -30,6 +30,10 @@ inputs:
   cache_update:
     required: false
     description: "Use cache for tests"
+  sleep_after_tests:
+    required: false
+    default: "0"
+    description: "Number of seconds to sleep after ya test launch"
 runs:
   using: composite
   steps:
@@ -101,7 +105,7 @@ runs:
         readarray -d ',' -t test_size < <(printf "%s" "${{ inputs.test_size }}")
         readarray -d ',' -t test_type < <(printf "%s" "${{ inputs.test_type }}")
 
-        echo ./ya test -k --build "${build_type}" -D'BUILD_LANGUAGES=CPP PY3 PY2 GO' \
+        ./ya test -k --build "${build_type}" -D'BUILD_LANGUAGES=CPP PY3 PY2 GO' \
           ${test_size[@]/#/--test-size=} ${test_type[@]/#/--test-type=} \
           --test-threads "${{ inputs.test_threads }}" --link-threads "${{ inputs.link_threads }}" \
           --cache-size 512G --do-not-output-stderrs -T \
@@ -116,7 +120,7 @@ runs:
             fi
         )
 
-        sleep 3600
+          sleep ${{ inputs.sleep_after_tests }}
 
     - name: postprocess junit report
       shell: bash
