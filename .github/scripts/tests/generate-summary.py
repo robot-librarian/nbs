@@ -79,6 +79,9 @@ class TestResult:
             "log": get_property_value(testcase, "url:log"),
             "stdout": get_property_value(testcase, "url:stdout"),
             "stderr": get_property_value(testcase, "url:stderr"),
+            "backtrace": get_property_value(testcase, "url:backtrace"),
+            "recipe_stderr": get_property_value(testcase, "url:recipe stderr"),
+            "recipe_stdout": get_property_value(testcase, "url:recipe stdout")
         }
         log_urls = {k: v for k, v in log_urls.items() if v}
 
