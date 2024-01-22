@@ -567,6 +567,7 @@ func TestDeleteSnapshotData(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			f := createFixture(t)
 			defer f.teardown()
+			time.Sleep(600)
 
 			dataChunk := makeChunk(0, "abc")
 			dataChunkID, err := f.storage.WriteChunk(f.ctx, "", "snapshot", dataChunk, testCase.useS3)
