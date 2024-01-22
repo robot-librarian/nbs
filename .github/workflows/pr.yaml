@@ -101,7 +101,7 @@ jobs:
     uses: ./.github/workflows/build_and_test_on_demand.yaml
     with:
       build_target: "cloud/disk_manager/,cloud/filestore/"
-      test_target: "cloud/disk_manager/internal/pkg/dataplane/snapshot/storage/tests/,cloud/filestore/tests/profile_log/qemu-local-test/"
+      test_target: "cloud/disk_manager/internal/pkg/dataplane/snapshot/storage/,cloud/filestore/tests/profile_log/qemu-local-test/"
       build_preset: "relwithdebinfo"
       test_size: "small,medium"
       test_type: "unittest,clang_tidy,gtest,py3test,py2test,pytest,flake8,black,py2_flake8,go_test,gofmt"
