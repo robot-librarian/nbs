@@ -565,8 +565,6 @@ func TestClearDeletingSnapshots(t *testing.T) {
 func TestDeleteSnapshotData(t *testing.T) {
 	for _, testCase := range testCases() {
 		t.Run(testCase.name, func(t *testing.T) {
-			time.Sleep(600 * time.Second)
-
 			f := createFixture(t)
 			defer f.teardown()
 
