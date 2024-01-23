@@ -20,6 +20,7 @@ class TestStatus(Enum):
     ERROR = 2
     SKIP = 3
     MUTE = 4
+    TIMEOUT = 5
 
     def __lt__(self, other):
         return self.value < other.value
@@ -32,6 +33,7 @@ class TestResult:
     status: TestStatus
     log_urls: Dict[str, str]
     elapsed: float
+    is_timedout: bool
 
     @property
     def status_display(self):
@@ -63,8 +65,13 @@ class TestResult:
     def from_junit(cls, testcase):
         classname, name = testcase.get("classname"), testcase.get("name")
 
+        is_timedout = False
         if testcase.find("failure") is not None:
             status = TestStatus.FAIL
+            if "Killed by timeout" in testcase.find("failure").text:
+                print("{classname}, {name} is_timedout  = True")
+                is_timedout = True
+            is_timedout =
         elif testcase.find("error") is not None:
             status = TestStatus.ERROR
         elif get_property_value(testcase, "mute") is not None:
@@ -95,7 +102,7 @@ class TestResult:
                 f"Unable to cast elapsed time for {classname}::{name}  value={elapsed!r}"
             )
 
-        return cls(classname, name, status, log_urls, elapsed)
+        return cls(classname, name, status, log_urls, elapsed, is_timedout)
 
 
 class TestSummaryLine:
