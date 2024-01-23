@@ -30,6 +30,10 @@ inputs:
   cache_update:
     required: false
     description: "Use cache for tests"
+  sync_to_s3:
+    required: false
+    default: 'false'
+    description: 'Sync failed tests folders to s3'
 runs:
   using: composite
   steps:
@@ -202,7 +206,7 @@ runs:
           exit $RC
         }
       env:
-        SYNC_TO_S3: ${{ vars.SYNC_TO_S3 || 'false' }}
+        SYNC_TO_S3: ${{ inputs.sync_to_s3 || 'false' }}
 
     - name: Sync test results to S3
       if: always()
