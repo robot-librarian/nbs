@@ -69,7 +69,7 @@ class TestResult:
         if testcase.find("failure") is not None:
             status = TestStatus.FAIL
             if "Killed by timeout" in testcase.find("failure").text:
-                print("{classname}, {name} is_timedout  = True")
+                print(f"{classname}, {name} is_timedout  = True")
                 is_timedout = True
         elif testcase.find("error") is not None:
             status = TestStatus.ERROR

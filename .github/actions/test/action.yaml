@@ -194,10 +194,15 @@ runs:
           find "$TESTS_DATA_DIR" -type f -print0 | xargs -0 -n 10 file -i  | grep "application/x-executable" | awk -F: '{print $1}' | xargs rm
           echo "::endgroup::"
           echo "::group::s3-sync"
-          # sudo -E -H -u github s3cmd sync --follow-symlinks --acl-private --no-progress --stats --no-check-md5 "$TESTS_DATA_DIR/" "$S3_BUCKET_PATH/test_data/"
+          if [ "$SYNC_TO_S3" -eq "true" ];
+          then
+            sudo -E -H -u github s3cmd sync --follow-symlinks --acl-private --no-progress --stats --no-check-md5 "$TESTS_DATA_DIR/" "$S3_BUCKET_PATH/test_data/"
+          fi
           echo "::endgroup::"
           exit $RC
         }
+      env:
+        SYNC_TO_S3: ${{ vars.SYNC_TO_S3 || 'false' }}
 
     - name: Sync test results to S3
       if: always()
