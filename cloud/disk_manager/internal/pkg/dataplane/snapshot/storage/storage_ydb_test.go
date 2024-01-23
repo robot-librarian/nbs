@@ -563,13 +563,12 @@ func TestClearDeletingSnapshots(t *testing.T) {
 }
 
 func TestDeleteSnapshotData(t *testing.T) {
-	time.Sleep(600)
 	for _, testCase := range testCases() {
-		time.Sleep(600)
 		t.Run(testCase.name, func(t *testing.T) {
+			time.Sleep(600 * time.Second)
+
 			f := createFixture(t)
 			defer f.teardown()
-			time.Sleep(600)
 
 			dataChunk := makeChunk(0, "abc")
 			dataChunkID, err := f.storage.WriteChunk(f.ctx, "", "snapshot", dataChunk, testCase.useS3)
