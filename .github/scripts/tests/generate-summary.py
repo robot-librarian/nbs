@@ -71,7 +71,6 @@ class TestResult:
             if "Killed by timeout" in testcase.find("failure").text:
                 print("{classname}, {name} is_timedout  = True")
                 is_timedout = True
-            is_timedout =
         elif testcase.find("error") is not None:
             status = TestStatus.ERROR
         elif get_property_value(testcase, "mute") is not None:
