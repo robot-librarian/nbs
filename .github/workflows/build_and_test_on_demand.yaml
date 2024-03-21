@@ -134,7 +134,7 @@ jobs:
         uses: ./.github/actions/runner_create
         timeout-minutes: 60
         with:
-          org: ${{ github.repository_owner }}
+          org: ydb-platform
           team: NBS
           repo_owner: ${{ github.repository_owner }}
           repo: ${{ github.event.repository.name }}
