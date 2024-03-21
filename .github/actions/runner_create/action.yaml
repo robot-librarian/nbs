@@ -66,11 +66,16 @@ outputs:
       Instance id of the created runner.
       The id is used to terminate the instance when the runner is not needed anymore.
     value: ${{ steps.create-vm.outputs.instance-id }}
-  ipv4:
+  local-ipv4:
     description: >-
-      IPv4 address of the created runner.
+      Local ipv4 address of the created runner.
       The address is used to connect to the runner via SSH.
-    value: ${{ steps.create-vm.outputs.ipv4 }}
+    value: ${{ steps.create-vm.outputs.local-ipv4 }}
+  external-ipv4:
+    description: >-
+      External ipv4 address of the created runner.
+      The address is used to connect to the runner via SSH.
+    value: ${{ steps.create-vm.outputs.external-ipv4 || '0.0.0.0' }}
 
 runs:
   using: composite

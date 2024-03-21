@@ -108,7 +108,8 @@ jobs:
     outputs:
       label: ${{ steps.start-runner.outputs.label }}
       instance-id: ${{ steps.start-runner.outputs.instance-id }}
-      runner_ipv4: ${{ steps.start-runner.outputs.ipv4 }}
+      runner_ipv4: ${{ steps.start-runner.outputs.external-ipv4 }}
+      runner_local_ipv4: ${{ steps.start-runner.outputs.local-ipv4 }}
     steps:
       - name: checkout PR
         uses: actions/checkout@v4
@@ -154,7 +155,7 @@ jobs:
 
 
   prepare-vm:
-    name: Prepare runner [id=${{ needs.provide-runner.outputs.instance-id }} ip=${{ needs.provide-runner.outputs.runner_ipv4 }}]
+    name: Prepare runner [id=${{ needs.provide-runner.outputs.instance-id }} local_ip=${{ needs.provide-runner.outputs.runner_local_ipv4 }} ip=${{ needs.provide-runner.outputs.runner_ipv4 }}]
     needs: provide-runner
     runs-on: [ self-hosted, "${{ needs.provide-runner.outputs.label }}" ]
     steps:
@@ -180,7 +181,7 @@ jobs:
         uses: ./.github/actions/prepare
 
   build-and-test:
-    name: Build and test NBS [id=${{ needs.provide-runner.outputs.instance-id }} ip=${{ needs.provide-runner.outputs.runner_ipv4 }}]
+    name: Build and test NBS [id=${{ needs.provide-runner.outputs.instance-id }} local_ip=${{ needs.provide-runner.outputs.runner_local_ipv4 }} ip=${{ needs.provide-runner.outputs.runner_ipv4 }}]
     uses: ./.github/workflows/build_and_test_ya.yaml
     needs:
       - provide-runner
@@ -218,7 +219,7 @@ jobs:
         run: sleep ${{ needs.build-and-test.outputs.sleep_after_tests }}
 
   release-runner:
-    name: Release self-hosted runner [id=${{ needs.provide-runner.outputs.instance-id }} ip=${{ needs.provide-runner.outputs.runner_ipv4 }}]
+    name: Release self-hosted runner [id=${{ needs.provide-runner.outputs.instance-id }} local_ip=${{ needs.provide-runner.outputs.runner_local_ipv4 }} ip=${{ needs.provide-runner.outputs.runner_ipv4 }}]
     needs:
       - provide-runner  # required to get output from the start-runner job
       - build-and-test  # required to wait when the main job is done

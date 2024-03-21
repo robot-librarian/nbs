@@ -232,14 +232,17 @@ def create_vm(sdk, args):
         )
         instance_id = result.response.id
         name = result.response.name
-        ipv4 = result.response.network_interfaces[0].primary_v4_address.address
+        external_ipv4 = result.response.network_interfaces[0].primary_v4_address.one_to_one_nat.address
+        local_ipv4 = result.response.network_interfaces[0].primary_v4_address.address
         if instance_id:
             logging.info(
                 f"Created VM {name} with ID {instance_id} and label {runner_github_label}"
             )
             output("instance-id", instance_id)
             output("label", runner_github_label)
-            output("ipv4", ipv4)
+            output("local-ipv4", local_ipv4)
+            if external_ipv4:
+                output("external-ipv4", external_ipv4)
         else:
             logging.error(f"Failed to create VM with request: {request}")
             logging.error(f"Response: {result}")
