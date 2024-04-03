@@ -52,7 +52,7 @@ jobs:
                     const reviews = await github.rest.pulls.listReviews({
                         owner,
                         repo,
-                        pull_request_number: prNumber
+                        pull_number: prNumber
                     });
 
                     // Track unique approvers
