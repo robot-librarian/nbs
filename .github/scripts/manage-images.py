@@ -26,7 +26,7 @@ PROTECTED_IMAGE_IDS = [
     "arlf5b2mm2k1s4b71u4t",
     "arlhviu5hj9aj6uqq6l3",
     "arlpgqq65s5p13srj592",
-    "arl7p6s8d25e8m83kvi3"
+    "arl7p6s8d25e8m83kvi3",
 ]
 
 

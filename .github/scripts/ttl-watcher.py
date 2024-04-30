@@ -177,7 +177,7 @@ if __name__ == "__main__":
         "logs",
         "build_logs",
         "artifacts",
-        "ya_archive"
+        "ya_archive",
     }
 
     s3_client = boto3.client("s3")
