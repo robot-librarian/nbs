@@ -85,7 +85,7 @@ jobs:
           vm_zone: eu-north1-c
           vm_cpu: 60
           vm_memory: 240
-          vm_disk_type: network-ssd-nonreplicated
+          vm_disk_type: network-ssd
           vm_disk_size: 1023
           vm_subnet: f8uh0ml4rhb45nde9p75
           vm_image: ${{ vars.IMAGE_ID_2204 }}
