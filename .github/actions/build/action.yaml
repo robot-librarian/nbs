@@ -25,6 +25,10 @@ inputs:
     required: false
     default: "8"
     description: "link threads count"
+  clean_ya_dir:
+    required: false
+    default: "false"
+    description: "clean ya dir"
 
 runs:
   using: composite
@@ -37,6 +41,11 @@ runs:
         export TMP_DIR=/home/github/tmp_build
         echo "TMP_DIR=$TMP_DIR" >> $GITHUB_ENV
         rm -rf $TMP_DIR && mkdir $TMP_DIR && chown -R github:github $TMP_DIR $GITHUB_WORKSPACE
+
+        if [ "${{ inputs.clean_ya_dir }}" == "true" ] && [ -d /home/github/.ya/ ]; then
+          echo "Cleaning ya dir"
+          rm -rf /home/github/.ya/
+        fi
 
     - name: build
       shell: bash
@@ -87,6 +96,13 @@ runs:
             exit 1
             ;;
         esac
+        [ -d /home/github/.ya/tools/ ] && {
+          ya_bin_path=$(find /home/github/.ya/tools/ -type f -name "ya-bin")
+          if [ ! -s "$ya_bin_path" ]; then
+            echo "ya-bin exists but is empty, recovering with clean cache"
+            rm -rf /home/github/.ya/
+          fi
+        }
 
         sudo -E -H -u github ./ya make -k --build "${build_type}" --force-build-depends -D'BUILD_LANGUAGES=CPP PY3 PY2 GO' -T --stat  \
           --log-file "$TMP_DIR/ya_log.txt" --evlog-file "$TMP_DIR/ya_evlog.jsonl" \

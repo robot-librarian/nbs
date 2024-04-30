@@ -2,10 +2,10 @@ name: Create runner VM
 description: Create runner VM using manage-vm.py
 inputs:
   org:
-    required: true
+    required: false
     description: "org name"
   team:
-    required: true
+    required: false
     description: "team slug name"
   repo_owner:
     required: true
@@ -96,9 +96,7 @@ runs:
       id: create-vm
       shell: bash
       run: |
-        python .github/scripts/manage-vm.py create \
-          --github-org "${ORG}" \
-          --github-team-slug "${TEAM}" \
+        python .github/scripts/manage-vm.py create ${ORG} ${TEAM} \
           --github-repo-owner "${REPO_OWNER}" \
           --github-repo "${REPO}" \
           --service-account-key "${SERVICE_ACCOUNT_KEY}" \
@@ -113,8 +111,8 @@ runs:
           --apply
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
-        ORG: ${{ inputs.org }}
-        TEAM: ${{ inputs.team }}
+        ORG: ${{ inputs.org && format('--github-org {0}', inputs.org) || ''}}
+        TEAM: ${{ inputs.team && format('--github-team-slug {0}', inputs.team) || ''}}
         REPO_OWNER: ${{ inputs.repo_owner }}
         REPO: ${{ inputs.repo }}
         VM_NAME: ${{ inputs.vm_name }}
