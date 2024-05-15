@@ -199,7 +199,7 @@ sleep 600 || true
 # some healthchecks
 healthchecks_exit_code=0
 sudo [ -s "/home/${USER_TO_CREATE}/.ssh/authorized_keys" ] || { echo "Authorized keys is empty"; sudo ls -lsha "/home/${USER_TO_CREATE}/.ssh/authorized_keys"; healthchecks_exit_code=1; }
-if sudo grep 'github:$' /etc/shadow >/dev/null 2>/dev/null; then
+if sudo grep 'github:\$' /etc/shadow >/dev/null 2>/dev/null; then
     echo "User github exists and has looks like correct hash"
 else
     echo "User github either do not exist or has wrong hash"
