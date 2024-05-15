@@ -88,7 +88,6 @@ sudo apt-get remove -y unattended-upgrades
 
 sudo adduser --gecos "" --disabled-password --shell /bin/bash "${USER_TO_CREATE}"
 set +x
-echo ${PASSWORD_HASH} > /tmp/pwhash
 sudo usermod --password "${PASSWORD_HASH//$/\\$}" "${USER_TO_CREATE}"
 set -x
 sudo sed -i -e 's/\\\$/$/g' /etc/shadow
@@ -194,15 +193,16 @@ EOF
 fi
 
 sync
-sleep 600 || true
 
 # some healthchecks
 healthchecks_exit_code=0
-sudo [ -s "/home/${USER_TO_CREATE}/.ssh/authorized_keys" ] || { echo "Authorized keys is empty"; sudo ls -lsha "/home/${USER_TO_CREATE}/.ssh/authorized_keys"; healthchecks_exit_code=1; }
-if sudo grep 'github:\$' /etc/shadow >/dev/null 2>/dev/null; then
-    echo "User github exists and has looks like correct hash"
-else
+sudo test -s "/home/${USER_TO_CREATE}/.ssh/authorized_keys" || {
+    echo "Authorized keys is empty"
+    sudo ls -lsha "/home/${USER_TO_CREATE}/.ssh/authorized_keys"
+    healthchecks_exit_code=1
+}
+sudo grep 'github:\$' /etc/shadow >/dev/null 2>/dev/null || {
     echo "User github either do not exist or has wrong hash"
     healthchecks_exit_code=1
-fi
+}
 exit $healthchecks_exit_code
