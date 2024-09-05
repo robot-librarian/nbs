@@ -259,12 +259,6 @@ jobs:
       if: env.build == 'true' && steps.check-image.outputs.image_already_exists != 'true'
       run: echo ${{ steps.build.outputs.IMAGE_ID_2204 }}
 
-    - name: Create and delete VM
-      if: env.build == 'true' && steps.check-image.outputs.image_already_exists != 'true' && inputs.check_vm_creation == true
-      uses: ./.github/workflows/create_and_delete_vm.yaml
-      with:
-        vm_image: ${{ steps.build.outputs.IMAGE_ID_2204 }}
-
     - name: Set new image id
       if: env.build == 'true' && steps.check-image.outputs.image_already_exists != 'true'
       run: |
