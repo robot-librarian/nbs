@@ -108,6 +108,9 @@ defaults:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      IMAGE_ID_2204: ${{ steps.build.outputs.IMAGE_ID_2204 }}
+      BUILD: ${{ env.build }}
     steps:
     - name: Checkout PR
       uses: actions/checkout@v4
@@ -277,3 +280,12 @@ jobs:
         IMAGES_TO_KEEP: ${{ inputs.images_to_keep }}
         UPDATE_IMAGE_ID: ${{ inputs.update_image_id && '--update-image-id' || '' }}
         REMOVE_OLD_IMAGES: ${{ inputs.remove_old_images && '--remove-old-images' || '' }}
+  create-and-delete-vm:
+    needs:
+      - build
+    name: Create and delete VM
+    if: inputs.check_vm_creation == true && needs.build.outputs.BUILD == 'true'
+    uses: ./.github/workflows/create_and_delete_vm.yaml
+    secrets: inherit
+    with:
+      vm_image: ${{ needs.build.outputs.IMAGE_ID_2204 }}
