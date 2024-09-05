@@ -45,6 +45,11 @@ on:
         required: false
         default: "gh-2204-auto"
         type: string
+      check_vm_creation:
+        description: "Check VM creation"
+        required: false
+        default: false
+        type: boolean
   workflow_dispatch:
     inputs:
       build:
@@ -87,6 +92,11 @@ on:
         required: false
         default: "gh-2204-auto"
         type: string
+      check_vm_creation:
+        description: "Check VM creation"
+        required: false
+        default: false
+        type: boolean
 
 env:
   build: ${{ github.event_name == 'schedule' && 'true' || inputs.build }}
@@ -245,6 +255,12 @@ jobs:
     - name: Print IMAGE_ID_2204
       if: env.build == 'true' && steps.check-image.outputs.image_already_exists != 'true'
       run: echo ${{ steps.build.outputs.IMAGE_ID_2204 }}
+
+    - name: Create and delete VM
+      if: env.build == 'true' && steps.check-image.outputs.image_already_exists != 'true' && inputs.check_vm_creation == true
+      uses: ./.github/workflows/create_and_delete_vm.yaml
+      with:
+        vm_image: ${{ steps.build.outputs.IMAGE_ID_2204 }}
 
     - name: Set new image id
       if: env.build == 'true' && steps.check-image.outputs.image_already_exists != 'true'
