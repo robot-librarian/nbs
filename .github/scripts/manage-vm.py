@@ -388,7 +388,7 @@ def create_vm(sdk: SDK, args: argparse.Namespace):
                 )
             )
 
-            if not result.contents:
+            if not result_serial.contents:
                 logger.error("Failed to get console output for VM with ID %s", instance_id)
                 github_output("console-output", "false")
             else:
