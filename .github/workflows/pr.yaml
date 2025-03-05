@@ -14,9 +14,16 @@ on:
       - 'synchronize'
       - 'reopened'
       - 'labeled'
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: write 
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
+
 jobs:
   check-running-allowed:
     runs-on: ubuntu-latest
@@ -29,78 +36,78 @@ jobs:
         with:
           github-token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
           script: |
-            const { owner, repo } = context.repo;
-            const prAuthor = context.payload.pull_request.user.login;
-            const prNumber = context.payload.pull_request.number;
-
-            // 1) Check if PR author is an org member
-            let isAuthorOrgMember = false;
-            try {
-              const { data: membership } = await github.rest.orgs.getMembershipForUser({
-                org: owner,         // org name
-                username: prAuthor
-              });
-
-              if (membership && membership.state === "active") {
-                isAuthorOrgMember = true;
+            // Helper: check if user is an org member
+            async function isOrgMember(owner, username) {
+              core.info(`Checking membership for user: ${username}`);
+              try {
+                const { data: membership } = await github.rest.orgs.getMembershipForUser({
+                  org: owner,
+                  username
+                });
+                if (membership?.state === 'active') {
+                  core.info(`${username} is confirmed as an org member`);
+                  return true;
+                } else {
+                  core.info(`${username} is not an active org member (state: ${membership?.state})`);
+                  return false;
+                }
+              } catch (error) {
+                // Often the call fails if the user isn't in the org or it's private
+                core.error(`Error checking membership for user ${username}: ${error.message}`);
+                return false;
               }
-            } catch (error) {
-              // Probably means they're not a member
-              core.info(`Could not confirm author as org member: ${error.message}`);
             }
 
-            // If author is org member, we can proceed
-            if (isAuthorOrgMember) {
-              core.info("Author is an org member. Setting authorized = true");
-              core.setOutput("authorized", "true");
+            const { owner, repo } = context.repo;
+            const prNumber = context.payload.pull_request.number;
+            const prAuthor = context.payload.pull_request.user.login;
+
+            core.info(`Starting membership check for PR #${prNumber} by @${prAuthor}`);
+
+            // 1) If the PR author is already an org member => authorized
+            const authorIsOrgMember = await isOrgMember(owner, prAuthor);
+            if (authorIsOrgMember) {
+              core.info(`User @${prAuthor} is org member => authorized`);
               return true;
             }
 
-            // 2) Check 'ok-to-test' label from an org member
-            const { data: events } = await github.rest.issues.listEvents({
-              owner,
-              repo,
-              issue_number: prNumber
-            });
+            core.info(`User @${prAuthor} is NOT an org member; checking for 'ok-to-test' label`);
+
+            // 2) If the PR author is not an org member, check 'ok-to-test' label
+            let events;
+            try {
+              const resp = await github.rest.issues.listEvents({
+                owner,
+                repo,
+                issue_number: prNumber
+              });
+              events = resp.data;
+            } catch (error) {
+              core.error(`Error fetching issue events: ${error.message}`);
+              return false;
+            }
 
             // Find a 'labeled' event for 'ok-to-test'
             const labeledOkToTest = events
-              .filter(e => e.event === "labeled" && e.label?.name === "ok-to-test")
+              .filter(e => e.event === 'labeled' && e.label?.name === 'ok-to-test')
               .pop();
 
             if (!labeledOkToTest) {
-              core.error("No 'ok-to-test' label from an org member. Setting authorized = false");
-              core.setOutput("authorized", "false");
+              core.info("No 'ok-to-test' label found on this PR");
               return false;
             }
 
-            // Confirm that the label was set by an org member
+            core.info(`Found 'ok-to-test' label event by @${labeledOkToTest.actor.login}, verifying if they are an org member...`);
+
             const labelerLogin = labeledOkToTest.actor.login;
-            let labelerIsOrgMember = false;
-            try {
-              const { data: labelerMembership } = await github.rest.orgs.getMembershipForUser({
-                org: owner,
-                username: labelerLogin
-              });
-              if (labelerMembership && labelerMembership.state === "active") {
-                labelerIsOrgMember = true;
-              }
-            } catch (error) {
-              core.error(`Could not confirm labeler as org member: ${error.message}`);
-            }
-
+            const labelerIsOrgMember = await isOrgMember(owner, labelerLogin);
             if (!labelerIsOrgMember) {
-              core.error(
-                `'ok-to-test' label was not added by an org member. Setting authorized = false`
-              );
-              core.setOutput("authorized", "false");
+              core.info(`User @${labelerLogin} who labeled 'ok-to-test' is not an org member => not authorized`);
               return false;
             }
 
-            // If we get here, the author is not in org, but has 'ok-to-test' from an org member
-            core.info("Author is not in org, but 'ok-to-test' is from org member. Setting authorized = true");
-            core.setOutput("authorized", "true");
-            return true;
+            core.info(`'ok-to-test' label added by an org member => authorized`);
+            return true
       - name: comment-if-waiting-on-ok
         if: steps.check-ownership-membership.outputs.result == 'false' &&
             github.event.action == 'opened'
