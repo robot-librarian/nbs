@@ -29,9 +29,6 @@ jobs:
         with:
           github-token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
           script: |
-            const core = require("@actions/core");
-            const github = require("@actions/github");
-
             const { context } = github;
             const { owner, repo } = context.repo;
             const prAuthor = context.payload.pull_request.user.login;
